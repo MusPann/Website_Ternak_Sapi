@@ -434,7 +434,7 @@ class Pengobatan extends Component {
         return (
           <Row gutter={[16, 16]} justify="start" style={{paddingLeft: 9}}>
             <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-              <Button type="primary" onClick={this.addPengobatan}>
+              <Button type="primary" onClick={this.handleAddPengobatan}>
                 Tambah Pengobatan
               </Button>
             </Col>

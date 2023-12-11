@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Form, Input, Modal, Select } from "antd";
+import { getPetugas } from "@/api/petugas";
 import { getPeternaks } from "@/api/peternak"; 
+import { getHewans } from "../../../api/hewan";
 
 const { Option } = Select;
 
@@ -11,6 +13,8 @@ class AddPKBForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
+    hewanList: [],
+    petugasList: [],
     namaPeternakList: [],
     selectedNamaPeternakId: null,
   };
@@ -19,7 +23,9 @@ class AddPKBForm extends Component {
     fetch("https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json")
       .then((response) => response.json())
       .then((provinces) => this.setState({ provinces }));
+    this.fetchPetugasList();
     this.fetchNamaPeternakList(); 
+    this.fetchHewanList();
   }
 
   handleProvinceChange = (value) => {
@@ -83,6 +89,21 @@ class AddPKBForm extends Component {
     }
   };
 
+  fetchPetugasList = async () => {
+    try {
+      const result = await getPetugas(); // Fetch petugas data from the server
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          petugasList: content.map((petugas) => petugas.namaPetugas), // Extract petugas names
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching petugas data: ", error);
+    }
+  };
+
   fetchNamaPeternakList = async () => {
     try {
       const result = await getPeternaks();
@@ -98,6 +119,21 @@ class AddPKBForm extends Component {
       }
     } catch (error) {
       console.error("Error fetching study program data: ", error);
+    }
+  };
+
+  fetchHewanList = async () => {
+    try {
+      const result = await getHewans();
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          hewanList: content.map((hewan) => hewan.kodeEartagNasional), 
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching hewan data: ", error);
     }
   };
 
@@ -120,7 +156,7 @@ class AddPKBForm extends Component {
     const { visible, onCancel, onOk, form, confirmLoading } = this.props;
     const { provinces, regencies, districts, villages } = this.state;
     const { getFieldDecorator } = form;
-    const { petugasList, namaPeternakList, selectedNamaPeternakId   } = this.state;
+    const { petugasList, namaPeternakList, selectedNamaPeternakId, hewanList} = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 20 },
@@ -229,10 +265,19 @@ class AddPKBForm extends Component {
             )(<Input placeholder="Masukkan NIK" />)}
           </Form.Item>
           <Form.Item label="ID Hewan:">
-            {getFieldDecorator(
-              "idHewan",
-              {}
-            )(<Input placeholder="Masukkan ID" />)}
+            {getFieldDecorator("kodeEartagNasional", {
+              rules: [
+                { required: true, message: "Silahkan isi ID Hewan" },
+              ],
+            })(
+              <Select placeholder="Pilih ID Hewan">
+                {hewanList.map((eartag) => (
+                  <Option key={eartag} value={eartag}>
+                    {eartag}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
           <Form.Item label="Spesies:">
             {getFieldDecorator("spesies", {
@@ -275,7 +320,13 @@ class AddPKBForm extends Component {
             {getFieldDecorator(
               "pemeriksaKebuntingan",
               {}
-            )(<Input placeholder="Masukkan Pemeriksa Kebuntingan" />)}
+            )(<Select placeholder="Pilih Petugas">
+            {petugasList.map((petugasName) => (
+              <Option key={petugasName} value={petugasName}>
+                {petugasName}
+              </Option>
+            ))}
+          </Select>)}
           </Form.Item>
         </Form>
       </Modal>

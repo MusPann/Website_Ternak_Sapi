@@ -45,7 +45,7 @@ class Map extends Component {
         console.log(content);
       }
     } catch (error) {
-      console.error("Error fetching study program data: ", error);
+      console.error("Error fetching hewan data: ", error);
     }
   };
   async componentDidMount() {
@@ -59,36 +59,52 @@ class Map extends Component {
     
     const pinKdg = L.icon({
       iconUrl: pinKandang,
-      iconSize: [64, 64], // Set the size of the icon
-      iconAnchor: [48, 64], // Set the anchor point of the icon
+      iconSize: [64, 64],
+      iconAnchor: [48, 64],
     });
     const pinHewan = L.icon({
       iconUrl: pinSapi,
-      iconSize: [64, 64], // Set the size of the icon
-      iconAnchor: [48, 64], // Set the anchor point of the icon
+      iconSize: [64, 64],
+      iconAnchor: [48, 64],
     }); 
-
+  
     return (
       <MapContainer center={position} zoom={11.5} style={{ width: 1200, height: 600 }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
+  
+  { kandang.map((kdg, index) => {
+  const kdgLatitude = parseFloat(kdg.latitude);
+  const kdgLongitude = parseFloat(kdg.longitude);
 
-        {kandang.map((kdg, index) => (
-            <Marker key={index}  position={[kdg.latitude, kdg.longitude]} icon={pinKdg}>
-              <Popup>
-                Lokasi kandang
-              </Popup>
-            </Marker>
-          ))}
-          {hewans.map((hwn, index) => (
-            <Marker key={index}  position={[hwn.latitude, hwn.longitude]} icon={pinHewan}>
-              <Popup>
-                Lokasi hewan
-              </Popup>
-            </Marker>
-          ))}
+  if (!isNaN(kdgLatitude) && !isNaN(kdgLongitude)) {
+    return (
+      <Marker key={`kandang-${index}`} position={[kdgLatitude, kdgLongitude]} icon={pinKdg}>
+        <Popup>
+          Lokasi kandang
+        </Popup>
+      </Marker>
+    );
+  }
+  return null;
+})}
+{ hewans.map((hwn, index) => {
+  const hwnLatitude = parseFloat(hwn.latitude);
+  const hwnLongitude = parseFloat(hwn.longitude);
+
+  if (!isNaN(hwnLatitude) && !isNaN(hwnLongitude)) {
+    return (
+      <Marker key={`hewan-${index}`} position={[hwnLatitude, hwnLongitude]} icon={pinHewan}>
+        <Popup>
+          Lokasi hewan
+        </Popup>
+      </Marker>
+    );
+  }
+  return null;
+})}
       </MapContainer>
     );
   }

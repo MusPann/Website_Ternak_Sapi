@@ -67,15 +67,14 @@ class InseminasiBuatan extends Component {
 
     if (statusCode === 200) {
       const filteredInseminasi = content.filter((inseminasi) => {
-        const { idInseminasi, idPeternak, idHewan, namaPeternak, eartag,
+        const { idInseminasi, idPeternak, namaPeternak, kodeEartagNasional,
         idPejantan, idPembuatan, bangsaPejantan, produsen, inseminator, lokasi } = inseminasi;
         const keyword = this.state.searchKeyword.toLowerCase();
         
         const isIdInseminasiValid = typeof idInseminasi === 'string';
         const isIdPeternakValid = typeof idPeternak === 'string';
-        const isIdHewanValid = typeof idHewan === 'string';
         const isNamaPeternakValid = typeof namaPeternak === 'string';
-        const isEartagValid = typeof eartag === 'string';
+        const isKodeEartagNasionalValid = typeof kodeEartagNasional === 'string';
         const isIdPejantanValid = typeof idPejantan === 'string';
         const isIdPembuatanValid = typeof idPembuatan === 'string';
         const isBangsaPejantanValid = typeof bangsaPejantan === 'string';
@@ -86,9 +85,8 @@ class InseminasiBuatan extends Component {
         return (
           (isIdInseminasiValid && idInseminasi.toLowerCase().includes(keyword)) ||
           (isIdPeternakValid && idPeternak.toLowerCase().includes(keyword)) ||
-          (isIdHewanValid && idHewan.toLowerCase().includes(keyword)) ||
           (isNamaPeternakValid && namaPeternak.toLowerCase().includes(keyword)) ||
-          (isEartagValid && eartag.toLowerCase().includes(keyword)) ||
+          (isKodeEartagNasionalValid && kodeEartagNasional.toLowerCase().includes(keyword)) ||
           (isIdPejantanValid && idPejantan.toLowerCase().includes(keyword)) ||
           (isIdPembuatanValid && idPembuatan.toLowerCase().includes(keyword)) ||
           (isBangsaPejantanValid && bangsaPejantan.toLowerCase().includes(keyword)) ||
@@ -283,8 +281,7 @@ class InseminasiBuatan extends Component {
           lokasi: row[columnMapping["Lokasi"]], 
           namaPeternak: row[columnMapping["Nama Peternak"]],
           idPeternak: row[columnMapping["ID Peternak"]],
-          idHewan: row[columnMapping["ID Hewan"]],
-          eartag: row[columnMapping["eartag"]],
+          kodeEartagNasional: row[columnMapping["Eartag"]],
           ib1: row[columnMapping["IB 1"]],
           ib2: row[columnMapping["IB 2"]],
           ib3: row[columnMapping["IB 3"]],
@@ -358,8 +355,7 @@ class InseminasiBuatan extends Component {
       "Lokasi",
       "Nama Peternak",
       "ID Peternak",
-      "ID Hewan",
-      "Eartag",
+      "Kode Eartag",
       "IB 1",
       "IB 2",
       "IB 3",
@@ -379,8 +375,7 @@ class InseminasiBuatan extends Component {
         item.lokasi,
         item.namaPeternak,
         item.idPeternak,
-        item.idHewan,
-        item.eartag,
+        item.kodeEartagNasional,
         item.ib1,
         item.ib2,
         item.ib3,
@@ -434,8 +429,7 @@ class InseminasiBuatan extends Component {
       {title:"Lokasi", dataIndex:"lokasi", key:"lokasi"},
       {title:"Nama Peternak", dataIndex:["idPeternak", "namaPeternak"], key:"namaPeternak"},
       {title:"ID Peternak", dataIndex:["idPeternak", "idPeternak"], key:"idPeternak"},
-      {title:"ID Hewan", dataIndex:"idHewan", key:"idHewan"},
-      {title:"Eartag", dataIndex:"eartag", key:"eartag"},
+      {title:"Kode Eartag", dataIndex:["kodeEartagNasional", "kodeEartagNasional"], key:"kodeEartagNasional"},
       {title:"IB 1", dataIndex:"ib1", key:"ib1"},
       {title:"IB 2", dataIndex:"ib2", key:"ib2"},
       {title:"IB 3", dataIndex:"ib3", key:"ib3"},
@@ -463,7 +457,7 @@ class InseminasiBuatan extends Component {
         return (
           <Row gutter={[16, 16]} justify="start" style={{paddingLeft: 9}}>
             <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-              <Button type="primary" onClick={this.addInseminasiBuatan}>
+              <Button type="primary" onClick={this.handleAddInseminasiBuatan}>
                 Tambah Inseminasi Buatan
               </Button>
             </Col>

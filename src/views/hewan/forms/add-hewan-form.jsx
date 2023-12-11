@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Form, Input, Modal, Select, Upload, Icon } from "antd";
 import { getPetugas } from "@/api/petugas"; // Import the API function to fetch petugas data
 import { getPeternaks } from "@/api/peternak"; 
+import {getKandang} from "@/api/kandang";
 import { PlusOutlined } from '@ant-design/icons';
 import Geocode from "react-geocode";
 
@@ -20,6 +21,7 @@ class AddHewanForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
+    kandangList: [],
     petugasList: [], 
     namaPeternakList: [],
     selectedNamaPeternakId: null,
@@ -31,6 +33,7 @@ class AddHewanForm extends Component {
       .then((provinces) => this.setState({ provinces }));
     this.fetchPetugasList();
     this.fetchNamaPeternakList(); 
+    this.fetchKandangList();
   }
 
   fetchPetugasList = async () => {
@@ -45,6 +48,21 @@ class AddHewanForm extends Component {
     } catch (error) {
       // Handle error if any
       console.error("Error fetching petugas data: ", error);
+    }
+  };
+
+  fetchKandangList = async () => {
+    try {
+      const result = await getKandang(); // Fetch kandang data from the server
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          kandangList: content.map((kandang) => kandang.idKandang), // Extract kandang id
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching kandang data: ", error);
     }
   };
 
@@ -180,6 +198,7 @@ class AddHewanForm extends Component {
       regencies, 
       districts, 
       villages, 
+      kandangList,
       petugasList, 
       namaPeternakList, 
       selectedNamaPeternakId 
@@ -300,6 +319,21 @@ class AddHewanForm extends Component {
               "nikPeternak",
               {}
             )(<Input placeholder="Masukkan NIK peternak" />)}
+          </Form.Item>
+          <Form.Item label="ID Kandang:">
+            {getFieldDecorator("idKandang", {
+              rules: [
+                { required: true, message: "Silahkan isi id kandang" },
+              ],
+            })(
+              <Select placeholder="Pilih ID Kandang">
+                {kandangList.map((kandangId) => (
+                  <Option key={kandangId} value={kandangId}>
+                    {kandangId}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
           <Form.Item label="Spesies:">
             {getFieldDecorator("spesies", { initialValue: "Sapi Limosin" })(

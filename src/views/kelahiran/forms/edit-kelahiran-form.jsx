@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import { Form, Input, Modal, Select } from "antd";
 import { getPetugas } from "@/api/petugas"; // Import the API function to fetch petugas data
-import { getPeternaks } from "@/api/peternak"; 
+import { getPeternaks } from "@/api/peternak";
+import { getHewans } from "../../../api/hewan"; 
+
+const { Option } = Select;
 
 class EditKelahiranForm extends Component {
   state = {
@@ -9,6 +12,7 @@ class EditKelahiranForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
+    hewanList: [],
     petugasList: [],
     namaPeternakList: [],
     selectedNamaPeternakId: null,
@@ -20,6 +24,7 @@ class EditKelahiranForm extends Component {
       .then((provinces) => this.setState({ provinces }));
     this.fetchPetugasList();
     this.fetchNamaPeternakList();
+    this.fetchHewanList();
   }
 
   handleProvinceChange = (value) => {
@@ -98,6 +103,21 @@ class EditKelahiranForm extends Component {
     }
   };
 
+  fetchHewanList = async () => {
+    try {
+      const result = await getHewans();
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          hewanList: content.map((hewan) => hewan.kodeEartagNasional), 
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching hewan data: ", error);
+    }
+  };
+
   fetchNamaPeternakList = async () => {
     try {
       const result = await getPeternaks();
@@ -131,7 +151,7 @@ class EditKelahiranForm extends Component {
     const { visible, onCancel, onOk, form, confirmLoading, currentRowData } =
       this.props;
     const { getFieldDecorator } = form;
-    const { petugasList, namaPeternakList, selectedNamaPeternakId   } = this.state;
+    const { petugasList, namaPeternakList, selectedNamaPeternakId, hewanList   } = this.state;
     const { provinces, regencies, districts, villages } = this.state;
     const {
       idKejadian,
@@ -142,7 +162,6 @@ class EditKelahiranForm extends Component {
       idPeternak,
       kartuTernakInduk,
       eartagInduk,
-      idHewanInduk,
       spesiesInduk,
       idPejantanStraw,
       idBatchStraw,
@@ -154,7 +173,7 @@ class EditKelahiranForm extends Component {
       idHewanAnak,
       jenisKelaminAnak,
       kategori,
-      petugasPelopor,
+      petugasPelapor,
       urutanIb,
     } = currentRowData;
     const formItemLayout = {
@@ -278,8 +297,18 @@ class EditKelahiranForm extends Component {
             )}
           </Form.Item>
           <Form.Item label="ID Hewan Induk:">
-            {getFieldDecorator("idHewanInduk", { initialValue: idHewanInduk })(
-              <Input placeholder="Masukkan ID" />
+            {getFieldDecorator("kodeEartagNasional", {
+              rules: [
+                { required: true, message: "Silahkan isi ID Hewan" },
+              ],
+            })(
+              <Select placeholder="Pilih ID Hewan">
+                {hewanList.map((eartag) => (
+                  <Option key={eartag} value={eartag}>
+                    {eartag}
+                  </Option>
+                ))}
+              </Select>
             )}
           </Form.Item>
           <Form.Item label="Spesies Induk:">
@@ -352,10 +381,16 @@ class EditKelahiranForm extends Component {
               <Input placeholder="Masukkan kategori" />
             )}
           </Form.Item>
-          <Form.Item label="Petugas Pelopor:">
-            {getFieldDecorator("petugasPelopor", {
-              initialValue: petugasPelopor,
-            })(<Input placeholder="Masukkan Petugas" />)}
+          <Form.Item label="Petugas Pelapor:">
+            {getFieldDecorator("petugasPelapor", {
+              initialValue: petugasPelapor,
+            })(<Select>
+              {petugasList.map((namaPetugas) => (
+                <Option key={namaPetugas} value={namaPetugas}>
+                  {namaPetugas}
+                </Option>
+              ))}
+            </Select>)}
           </Form.Item>
           <Form.Item label="Urutan IB:">
             {getFieldDecorator("urutanIb", { initialValue: urutanIb })(

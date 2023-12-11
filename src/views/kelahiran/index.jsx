@@ -64,24 +64,23 @@ class Kelahiran extends Component {
 
     if (statusCode === 200) {
       const filteredKelahiran = content.filter((kelahiran) => {
-        const { idKejadian, tanggalLaporan, tanggalLahir, lokasi, namaPeternak, 
+        const { idKejadian, tanggalLaporan, tanggalLahir, lokasi,
         idPeternak, kartuTernakInduk, kartuTernakAnak,
-        eartagInduk, eartagAnak, idHewanInduk, idHewanAnak,
+        eartagInduk, eartagAnak, kodeEartagNasional, idHewanAnak,
         spesiesInduk, spesiesPejantan, idPejantanStraw, idBatchStraw,
-        jenisKelaminAnak, kategori, petugasPelopor, produsenStraw} = kelahiran;
+        jenisKelaminAnak, kategori, petugasPelapor, produsenStraw} = kelahiran;
         const keyword = this.state.searchKeyword.toLowerCase();
         
         const isIdKejadianValid = typeof idKejadian === 'string';
         const isTanggalLaporanValid = typeof tanggalLaporan === 'string';
         const isTanggalLahirValid = typeof tanggalLahir === 'string';
         const isLokasiValid = typeof lokasi === 'string';
-        const isNamaPeternakValid =  typeof namaPeternak === 'string';
         const isIdPeternakValid = typeof idPeternak === 'string';
         const isKartuTernakIndukValid = typeof kartuTernakInduk === 'string';
         const isKartuTernakAnakValid = typeof kartuTernakAnak === 'string';
         const isEartagIndukValid = typeof eartagInduk === 'string';
         const isEartagAnakValid = typeof eartagAnak === 'string';
-        const isIdHewanIndukValid = typeof idHewanInduk === 'string';
+        const isKodeEartagNasionalValid = typeof kodeEartagNasional === 'string';
         const isIdHewanAnakValid = typeof idHewanAnak === 'string';
         const isSpesiesIndukValid = typeof spesiesInduk === 'string';
         const isSpesiesPejantanValid = typeof spesiesPejantan === 'string';
@@ -89,7 +88,7 @@ class Kelahiran extends Component {
         const isIdBatchStrawValid = typeof idBatchStraw === 'string';
         const isJenisKelaminAnakValid = typeof jenisKelaminAnak === 'string';
         const isKategoriValid = typeof kategori === 'string';
-        const isPetugasPeloporValid = typeof petugasPelopor === 'string';
+        const isPetugasPelaporValid = typeof petugasPelapor === 'string';
         const isProdusenStrawValid = typeof produsenStraw === 'string';
 
         return (
@@ -97,21 +96,20 @@ class Kelahiran extends Component {
           (isTanggalLaporanValid && tanggalLaporan.toLowerCase().includes(keyword)) ||
           (isTanggalLahirValid && tanggalLahir.toLowerCase().includes(keyword)) ||
           (isLokasiValid && lokasi.toLowerCase().includes(keyword)) ||
-          (isNamaPeternakValid && namaPeternak.toLowerCase().includes(keyword)) ||
           (isIdPeternakValid && idPeternak.toLowerCase().includes(keyword)) ||
           (isKartuTernakIndukValid && kartuTernakInduk.toLowerCase().includes(keyword)) ||
           (isSpesiesIndukValid && spesiesInduk.toLowerCase().includes(keyword)) ||
           (isKartuTernakAnakValid && kartuTernakAnak.toLowerCase().includes(keyword)) ||
           (isEartagIndukValid && eartagInduk.toLowerCase().includes(keyword)) ||
           (isEartagAnakValid && eartagAnak.toLowerCase().includes(keyword)) ||
-          (isIdHewanIndukValid && idHewanInduk.toLowerCase().includes(keyword)) ||
+          (isKodeEartagNasionalValid && kodeEartagNasional.toLowerCase().includes(keyword)) ||
           (isIdHewanAnakValid && idHewanAnak.toLowerCase().includes(keyword)) ||
           (isSpesiesPejantanValid && spesiesPejantan.toLowerCase().includes(keyword)) ||
           (isIdPejantanStrawValid && idPejantanStraw.toLowerCase().includes(keyword)) ||
           (isIdBatchStrawValid && idBatchStraw.toLowerCase().includes(keyword)) ||
           (isJenisKelaminAnakValid && jenisKelaminAnak.toLowerCase().includes(keyword)) ||
           (isKategoriValid && kategori.toLowerCase().includes(keyword)) ||
-          (isPetugasPeloporValid && petugasPelopor.toLowerCase().includes(keyword)) ||
+          (isPetugasPelaporValid && petugasPelapor.toLowerCase().includes(keyword)) ||
           (isProdusenStrawValid && produsenStraw.toLowerCase().includes(keyword))
         );
       });
@@ -299,15 +297,15 @@ class Kelahiran extends Component {
     try {
       await Promise.all(importedData.map(async (row) => {
         const dataToSave = {
-          idKejadian: row[columnMapping["id kejadian"]],
+          idKejadian: row[columnMapping["ID Kejadian"]],
           tanggalLaporan: this.convertToJSDate(row[columnMapping["Tanggal laporan"]]) ,
           tanggalLahir: this.convertToJSDate(row[columnMapping["Tanggal lahir"]]) ,
           lokasi: row[columnMapping["Lokasi"]],
           namaPeternak: row[columnMapping["Nama Peternak"]],
           idPeternak: row[columnMapping["ID Peternak"]],
           kartuTernakInduk: row[columnMapping["kartu ternak induk"]],
-          eartagInduk: row[columnMapping["eartag_induk"]],
-          idHewanInduk: row[columnMapping["ID Hewan"]],
+          eartagInduk: row[columnMapping["ID Hewan Induk"]],
+          kodeEartagNasional: row[columnMapping["eartag_induk"]],
           spesiesInduk: row[columnMapping["Spesies Induk"]],
           idPejantanStraw: row[columnMapping["ID Pejantan Straw"]],
           idBatchStraw: row[columnMapping["ID Batch Straw"]],
@@ -319,7 +317,7 @@ class Kelahiran extends Component {
           idHewanAnak: row[columnMapping["ID Hewan"]],
           jenisKelaminAnak: row[columnMapping["Jenis Kelamin Anak"]],
           kategori: row[columnMapping["kategori"]],
-          petugasPelopor: row[columnMapping["Petugas Pelapor"]],
+          petugasPelapor: row[columnMapping["Petugas Pelapor"]],
           urutanIb: row[columnMapping["urutan_ib"]],
         };
         try {
@@ -415,7 +413,7 @@ class Kelahiran extends Component {
         item.idPeternak,
         item.kartuTernakInduk,
         item.eartagInduk,
-        item.idHewanInduk,
+        item.kodeEartagNasional,
         item.spesiesInduk,
         item.idPejantanStraw,
         item.idBatchStraw,
@@ -427,7 +425,7 @@ class Kelahiran extends Component {
         item.idHewanAnak,
         item.jenisKelaminAnak,
         item.kategori,
-        item.petugasPelopor,
+        item.petugasPelapor,
         item.urutanIb,
       ];
       rows.push(row);
@@ -474,8 +472,8 @@ class Kelahiran extends Component {
       {title: "Nama Peternak", dataIndex: ["idPeternak", "namaPeternak"], key: "namaPeternak"},
       {title: "ID Peternak", dataIndex: ["idPeternak", "idPeternak"], key: "idPeternak"},
       {title: "Kartu Ternak Induk", dataIndex: "kartuTernakInduk", key: "kartuTernakInduk"},
-      {title: "Eartag Induk", dataIndex: "eartagInduk", key: "eartagInduk"},
-      {title: "ID Hewan Induk", dataIndex: "idHewanInduk", key: "idHewanInduk"},
+      {title: "ID Hewan Induk", dataIndex: "eartagInduk", key: "eartagInduk"},
+      {title: "Eartag Induk", dataIndex: ["kodeEartagNasional", "kodeEartagNasional"], key: "kodeEartagNasional"},
       {title: "Spesies Induk", dataIndex: "spesiesInduk", key: "spesiesInduk"},
       {title: "ID Pejantan Straw", dataIndex: "idPejantanStraw", key: "idPejantanStraw"},
       {title: "ID Batch Straw", dataIndex: "idBatchStraw", key: "idBatchStraw"},
@@ -487,7 +485,7 @@ class Kelahiran extends Component {
       {title: "ID Hewan Anak", dataIndex: "idHewanAnak", key: "idHewanAnak"},
       { title: "Jenis Kelamin Anak", dataIndex: "jenisKelaminAnak", key: "jenisKelaminAnak"},
       {title: "Kategori", dataIndex: "kategori", key: "kategori"},
-      {title: "Petugas Pelopor", dataIndex: "petugasPelopor", key: "petugasPelopor"},
+      {title: "Petugas Pelapor", dataIndex: "petugasPelapor", key: "petugasPelapor"},
       {title: "Urutan IB", dataIndex: "urutanIb", key: "urutanIb"}
     ];
 
@@ -507,7 +505,7 @@ class Kelahiran extends Component {
         return (
           <Row gutter={[16, 16]} justify="start" style={{paddingLeft: 9}}>
             <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-              <Button type="primary" onClick={this.addKelahiran}>
+              <Button type="primary" onClick={this.handleAddKelahiran}>
                 Tambah Kelahiran
               </Button>
             </Col>

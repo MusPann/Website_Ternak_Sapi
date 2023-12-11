@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Form, Input, Modal, Select } from "antd";
 import { getPetugas } from "@/api/petugas"; // Import the API function to fetch petugas data
 import { getPeternaks } from "@/api/peternak"; 
+import {getKandang} from "@/api/kandang";
 
 const { Option } = Select;
 
@@ -11,6 +12,7 @@ class EditHewanForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
+    kandangList: [],
     petugasList: [],
     namaPeternakList: [],
     selectedNamaPeternakId: null,
@@ -28,6 +30,20 @@ class EditHewanForm extends Component {
     } catch (error) {
       // Handle error if any
       console.error("Error fetching petugas data: ", error);
+    }
+  };
+  fetchKandangList = async () => {
+    try {
+      const result = await getKandang(); // Fetch kandang data from the server
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          kandangList: content.map((kandang) => kandang.idKandang), // Extract kandang id
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching kandang data: ", error);
     }
   };
 
@@ -67,6 +83,7 @@ class EditHewanForm extends Component {
       .then((provinces) => this.setState({ provinces }));
       this.fetchPetugasList();
       this.fetchNamaPeternakList(); 
+      this.fetchKandangList();
   }
 
   handleProvinceChange = (value) => {
@@ -127,6 +144,7 @@ class EditHewanForm extends Component {
       desa,
       namaPeternak,
       idPeternak,
+      idKandang,
       nikPeternak,
       spesies,
       sex,
@@ -136,8 +154,6 @@ class EditHewanForm extends Component {
       tanggalTerdaftar,
     } = currentRowData;
     const { provinces, regencies, districts, villages } = this.state;
-
-
     const formItemLayout = {
       labelCol: {
         xs: { span: 20 },
@@ -150,7 +166,7 @@ class EditHewanForm extends Component {
     };
 
     
-    const { petugasList, namaPeternakList, selectedNamaPeternakId  } = this.state;
+    const { petugasList, namaPeternakList, selectedNamaPeternakId, kandangList  } = this.state;
 
     return (
       <Modal
@@ -226,10 +242,6 @@ class EditHewanForm extends Component {
           </Form.Item>
           <Form.Item label="Nama Peternak:">
             {getFieldDecorator("namaPeternak", {
-              initialValue: namaPeternak,
-              rules: [
-                { required: true, message: "Silahkan isi Nama Peternak" },
-              ],
             })(
               <Select
                 placeholder="Pilih Nama Peternak"
@@ -246,14 +258,24 @@ class EditHewanForm extends Component {
           </Form.Item>
           <Form.Item label="ID Peternak:">
             {getFieldDecorator("idPeternak", {
-              initialValue: idPeternak,
-              rules: [{ required: true, message: "Silahkan isi id peternak" }],
             })(<Input placeholder="Masukkan ID Peternak"  readOnly/>)}
           </Form.Item>
           <Form.Item label="NIK Peternak:">
             {getFieldDecorator("nikPeternak", {
               initialValue: nikPeternak,
             })(<Input placeholder="Masukkan NIK peternak" />)}
+          </Form.Item>
+          <Form.Item label="ID Kandang:">
+            {getFieldDecorator("idKandang", {
+            })(
+              <Select placeholder="Pilih ID Kandang">
+                {kandangList.map((kandangId) => (
+                  <Option key={kandangId} value={kandangId}>
+                    {kandangId}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
           <Form.Item label="Spesies:">
             {getFieldDecorator("spesies", { initialValue: spesies })(

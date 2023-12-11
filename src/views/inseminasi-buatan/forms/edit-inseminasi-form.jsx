@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Form, Input, Modal, Select } from "antd";
 import { getPetugas } from "@/api/petugas"; // Import the API function to fetch petugas data
 import { getPeternaks } from "@/api/peternak"; 
+import { getHewans } from "../../../api/hewan";
 
 const { Option } = Select;
 
@@ -12,7 +13,7 @@ class EditInseminasiBuatanForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
-    petugasList: [], 
+    hewanList: [], 
     petugasList: [], 
     namaPeternakList: [],
     selectedNamaPeternakId: null,
@@ -24,6 +25,7 @@ class EditInseminasiBuatanForm extends Component {
       .then((provinces) => this.setState({ provinces }));
     this.fetchPetugasList();
     this.fetchNamaPeternakList(); 
+    this.fetchHewanList();
   }
 
   handleProvinceChange = (value) => {
@@ -102,6 +104,21 @@ class EditInseminasiBuatanForm extends Component {
     }
   };
 
+  fetchHewanList = async () => {
+    try {
+      const result = await getHewans();
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          hewanList: content.map((hewan) => hewan.kodeEartagNasional), 
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching hewan data: ", error);
+    }
+  };
+
   fetchNamaPeternakList = async () => {
     try {
       const result = await getPeternaks();
@@ -137,7 +154,7 @@ class EditInseminasiBuatanForm extends Component {
       this.props;
     const { getFieldDecorator } = form;
     const { provinces, regencies, districts, villages } = this.state;
-    const { petugasList, namaPeternakList, selectedNamaPeternakId   } = this.state;
+    const { petugasList, namaPeternakList, selectedNamaPeternakId, hewanList  } = this.state;
     const {
       idInseminasi,
       tanggalIB,
@@ -260,15 +277,20 @@ class EditInseminasiBuatanForm extends Component {
               rules: [{ required: true, message: "Silahkan isi id peternak" }],
             })(<Input placeholder="Masukkan ID Peternak"  readOnly/>)}
           </Form.Item>
-          <Form.Item label="ID Hewan:">
-            {getFieldDecorator("idHewan", {
-              initialValue: idHewan,
-            })(<Input placeholder="Masukkan ID Hewan" />)}
-          </Form.Item>
-          <Form.Item label="Eartag:">
-            {getFieldDecorator("eartag", {
-              initialValue: eartag,
-            })(<Input placeholder="Masukkan Eartag" />)}
+          <Form.Item label="Eartag Hewan:">
+            {getFieldDecorator("kodeEartagNasional", {
+              rules: [
+                { required: true, message: "Silahkan isi Eartag Hewan" },
+              ],
+            })(
+              <Select placeholder="Pilih Eartag">
+                {hewanList.map((eartag) => (
+                  <Option key={eartag} value={eartag}>
+                    {eartag}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
 
           {/* IB1, IB2, IB3, IB lain */}
@@ -329,7 +351,13 @@ class EditInseminasiBuatanForm extends Component {
           <Form.Item label="Inseminator:">
             {getFieldDecorator("inseminator", {
               initialValue: inseminator,
-            })(<Input placeholder="Masukkan Inseminator" />)}
+            })(<Select>
+              {petugasList.map((namaPetugas) => (
+                <Option key={namaPetugas} value={namaPetugas}>
+                  {namaPetugas}
+                </Option>
+              ))}
+            </Select>)}
           </Form.Item>
         </Form>
       </Modal>

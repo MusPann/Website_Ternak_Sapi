@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { Form, Input, Modal, Select } from "antd";
 import { getPetugas } from "@/api/petugas"; // Import the API function to fetch petugas data
 import { getPeternaks } from "@/api/peternak"; 
+import { getHewans } from "../../../api/hewan";
+
+const { Option } = Select;
 
 class AddKelahiranForm extends Component {
  
@@ -10,6 +13,7 @@ class AddKelahiranForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
+    hewanList: [],
     petugasList: [],
     namaPeternakList: [],
     selectedNamaPeternakId: null,
@@ -21,6 +25,7 @@ class AddKelahiranForm extends Component {
       .then((provinces) => this.setState({ provinces }));
     this.fetchPetugasList();
     this.fetchNamaPeternakList();
+    this.fetchHewanList();
   }
 
   handleProvinceChange = (value) => {
@@ -99,6 +104,21 @@ class AddKelahiranForm extends Component {
     }
   };
 
+  fetchHewanList = async () => {
+    try {
+      const result = await getHewans();
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          hewanList: content.map((hewan) => hewan.kodeEartagNasional), 
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching hewan data: ", error);
+    }
+  };
+
   fetchNamaPeternakList = async () => {
     try {
       const result = await getPeternaks();
@@ -134,7 +154,7 @@ class AddKelahiranForm extends Component {
   render() {
     const { visible, onCancel, onOk, form, confirmLoading } = this.props;
     const { getFieldDecorator } = form;
-    const { petugasList, namaPeternakList, selectedNamaPeternakId   } = this.state;
+    const { petugasList, namaPeternakList, selectedNamaPeternakId, hewanList   } = this.state;
     const { provinces, regencies, districts, villages } = this.state;
     const formItemLayout = {
       labelCol: {
@@ -256,10 +276,19 @@ class AddKelahiranForm extends Component {
             )(<Input placeholder="Masukkan Eartag" />)}
           </Form.Item>
           <Form.Item label="ID Hewan Induk:">
-            {getFieldDecorator(
-              "idHewanInduk",
-              {}
-            )(<Input placeholder="Masukkan ID" />)}
+            {getFieldDecorator("kodeEartagNasional", {
+              rules: [
+                { required: true, message: "Silahkan isi ID Hewan" },
+              ],
+            })(
+              <Select placeholder="Pilih ID Hewan">
+                {hewanList.map((eartag) => (
+                  <Option key={eartag} value={eartag}>
+                    {eartag}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
           <Form.Item label="Spesies Induk:">
             {getFieldDecorator("spesiesInduk", {
@@ -340,8 +369,8 @@ class AddKelahiranForm extends Component {
               {}
             )(<Input placeholder="Masukkan kategori" />)}
           </Form.Item>
-          <Form.Item label="Petugas Pelopor:">
-            {getFieldDecorator("petugasPelopor", {
+          <Form.Item label="Petugas Pelapor:">
+            {getFieldDecorator("petugasPelapor", {
               rules: [
                 { required: true, message: "Silahkan isi Inseminator" },
               ],

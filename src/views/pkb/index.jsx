@@ -65,14 +65,14 @@ class Pkb extends Component {
 
     if (statusCode === 200) {
       const filteredPKB = content.filter((pkb) => {
-        const { idKejadian, idPeternak, idHewan, tanggalPkb,
+        const { idKejadian, idPeternak, kodeEartagNasional, tanggalPkb,
         lokasi, namaPeternak, nikPeternak, 
         spesies, kategori, pemeriksaKebuntingan } = pkb;
         const keyword = this.state.searchKeyword.toLowerCase();
         
         const isIdKejadianValid = typeof idKejadian === 'string';
         const isIdPeternakValid = typeof idPeternak === 'string';
-        const isIdHewanValid = typeof idHewan === 'string';
+        const isKodeEartagNasionalValid = typeof kodeEartagNasional === 'string';
         const isTanggalPKBValid = typeof tanggalPkb === 'string';
         const isLokasiValid = typeof lokasi === 'string';
         const isNamaPeternakValid = typeof namaPeternak === 'string';
@@ -84,7 +84,7 @@ class Pkb extends Component {
         return (
           (isIdKejadianValid && idKejadian.toLowerCase().includes(keyword)) ||
           (isIdPeternakValid && idPeternak.toLowerCase().includes(keyword)) ||
-          (isIdHewanValid && idHewan.toLowerCase().includes(keyword)) ||
+          (isKodeEartagNasionalValid && kodeEartagNasional.toLowerCase().includes(keyword)) ||
           (isTanggalPKBValid && tanggalPkb.toLowerCase().includes(keyword)) ||
           (isLokasiValid && lokasi.toLowerCase().includes(keyword)) ||
           (isNamaPeternakValid && namaPeternak.toLowerCase().includes(keyword)) ||
@@ -296,10 +296,8 @@ class Pkb extends Component {
           idKejadian: row[columnMapping["ID Kejadian"]],
           tanggalPkb: this.convertToJSDate(row[columnMapping["Tanggal PKB"]]),
           lokasi: row[columnMapping["Lokasi"]],
-          namaPeternak: row[columnMapping["Nama Peternak"]],
           idPeternak: row[columnMapping["ID Peternak"]],
-          nikPeternak: row[columnMapping["NIK Peternak"]],
-          idHewan: row[columnMapping["ID Hewan"]],
+          kodeEartagNasional: row[columnMapping["ID Hewan"]],
           spesies: row[columnMapping["Spesies"]],
           kategori: row[columnMapping["kategori"]],
           jumlah: row[columnMapping["Jumlah"]],
@@ -388,7 +386,7 @@ class Pkb extends Component {
         item.namaPeternak,
         item.idPeternak,
         item.nikPeternak,
-        item.idHewan,
+        item.kodeEartagNasional,
         item.spesies,
         item.kategori,
         item.jumlah,
@@ -426,7 +424,7 @@ class Pkb extends Component {
       { title: "Nama Peternak", dataIndex: ["idPeternak", "namaPeternak"], key: "namaPeternak" },
       { title: "ID Peternak", dataIndex: ["idPeternak", "idPeternak"], key: "idPeternak" },
       { title: "NIK Peternak", dataIndex: "nikPeternak", key: "nikPeternak" },
-      { title: "ID Hewan", dataIndex: "idHewan", key: "idHewan" },
+      { title: "ID Hewan", dataIndex: "kodeEartagNasional", key: "kodeEartagNasional" },
       { title: "Spesies", dataIndex: "spesies", key: "spesies" },
       { title: "Kategori", dataIndex: "kategori", key: "kategori" },
       { title: "Jumlah", dataIndex: "jumlah", key: "jumlah" },
@@ -451,7 +449,7 @@ class Pkb extends Component {
         return (
           <Row gutter={[16, 16]} justify="start" style={{paddingLeft: 9}}>
             <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-              <Button type="primary" onClick={this.addPkb}>
+              <Button type="primary" onClick={this.handleAddPkb}>
                 Tambah PKB
               </Button>
             </Col>

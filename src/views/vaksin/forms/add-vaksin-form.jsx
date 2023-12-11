@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Form, Input, Modal, Select } from "antd";
-import { getPetugas } from "@/api/petugas"; // Import the API function to fetch petugas data
+import { getPetugas } from "@/api/petugas"; 
 import { getPeternaks } from "@/api/peternak"; 
+import { getHewans } from "../../../api/hewan";
 
 const { Option } = Select;
 
@@ -12,6 +13,7 @@ class AddVaksinForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
+    hewanList: [],
     petugasList: [],
     namaPeternakList: [],
     selectedNamaPeternakId: null,
@@ -23,6 +25,7 @@ class AddVaksinForm extends Component {
       .then((provinces) => this.setState({ provinces }));
     this.fetchPetugasList();
     this.fetchNamaPeternakList();
+    this.fetchHewanList();
   }
 
   handleProvinceChange = (value) => {
@@ -101,6 +104,21 @@ class AddVaksinForm extends Component {
     }
   };
 
+  fetchHewanList = async () => {
+    try {
+      const result = await getHewans();
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          hewanList: content.map((hewan) => hewan.kodeEartagNasional), 
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching hewan data: ", error);
+    }
+  };
+
   fetchNamaPeternakList = async () => {
     try {
       const result = await getPeternaks();
@@ -139,7 +157,7 @@ class AddVaksinForm extends Component {
     const { visible, onCancel, onOk, form, confirmLoading } = this.props;
     const { getFieldDecorator } = form;
     const { provinces, regencies, districts, villages } = this.state;
-    const { petugasList, namaPeternakList, selectedNamaPeternakId   } = this.state;
+    const { petugasList, namaPeternakList, selectedNamaPeternakId, hewanList} = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -168,16 +186,6 @@ class AddVaksinForm extends Component {
                 },
               ],
             })(<Input placeholder="Masukkan ID Vaksin" />)}
-          </Form.Item>
-          <Form.Item label="Tanggal IB:">
-            {getFieldDecorator("tanggalIB", {
-              rules: [
-                {
-                  required: true,
-                  message: "Silahkan isi tanggal vaksin buatan",
-                },
-              ],
-            })(<Input type="date" placeholder="Masukkan Tanggal IB" />)}
           </Form.Item>
           <Form.Item label="Provinsi:">
             {getFieldDecorator("provinsi")(
@@ -248,17 +256,21 @@ class AddVaksinForm extends Component {
               rules: [{ required: true, message: "Silahkan isi Nama Peternak" }],
             })(<Input disabled />)}
           </Form.Item>
-          <Form.Item label="ID Hewan:">
-            {getFieldDecorator("idHewan", {
-              rules: [{ required: true, message: "Silahkan isi id hewan" }],
-            })(<Input placeholder="Masukkan ID Hewan" />)}
+          <Form.Item label="Eartag Hewan:">
+            {getFieldDecorator("kodeEartagNasional", {
+              rules: [
+                { required: true, message: "Silahkan isi Eartag Hewan" },
+              ],
+            })(
+              <Select placeholder="Pilih Eartag">
+                {hewanList.map((eartag) => (
+                  <Option key={eartag} value={eartag}>
+                    {eartag}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
-          <Form.Item label="Eartag:">
-            {getFieldDecorator("eartag", {
-              rules: [{ required: true, message: "Silahkan isi eartag" }],
-            })(<Input placeholder="Masukkan Eartag" />)}
-          </Form.Item>
-
           {/* IB1, IB2, IB3, IB lain */}
           <Form.Item label="IB 1:">
             {getFieldDecorator(
@@ -284,7 +296,16 @@ class AddVaksinForm extends Component {
               {}
             )(<Input placeholder="Masukkan Vaksin Buatan Lain" />)}
           </Form.Item>
-
+          <Form.Item label="Tanggal IB:">
+            {getFieldDecorator("tanggalIB", {
+              rules: [
+                {
+                  required: true,
+                  message: "Silahkan isi tanggal vaksin buatan",
+                },
+              ],
+            })(<Input type="date" placeholder="Masukkan Tanggal IB" />)}
+          </Form.Item>
           <Form.Item label="ID Pejantan:">
             {getFieldDecorator("idPejantan", {
               rules: [{ required: true, message: "Silahkan isi id pejantan" }],
@@ -333,6 +354,7 @@ class AddVaksinForm extends Component {
               </Select>
             )}
           </Form.Item>
+          
         </Form>
       </Modal>
     );

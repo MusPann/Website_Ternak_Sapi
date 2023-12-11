@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Form, Input, Modal, Select } from "antd";
-import { getPetugas } from "@/api/petugas"; // Import the API function to fetch petugas data
+import { getPetugas } from "@/api/petugas"; 
 import { getPeternaks } from "@/api/peternak"; 
+import { getHewans } from "../../../api/hewan";
 
 const { Option } = Select;
 
@@ -12,6 +13,7 @@ class EditVaksinForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
+    hewanList: [],
     petugasList: [], 
     namaPeternakList: [],
     selectedNamaPeternakId: null,
@@ -23,6 +25,7 @@ class EditVaksinForm extends Component {
       .then((provinces) => this.setState({ provinces }));
     this.fetchPetugasList();
     this.fetchNamaPeternakList(); 
+    this.fetchHewanList();
   }
 
   handleProvinceChange = (value) => {
@@ -101,6 +104,21 @@ class EditVaksinForm extends Component {
     }
   };
 
+  fetchHewanList = async () => {
+    try {
+      const result = await getHewans();
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          hewanList: content.map((hewan) => hewan.kodeEartagNasional), 
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching hewan data: ", error);
+    }
+  };
+
   fetchNamaPeternakList = async () => {
     try {
       const result = await getPeternaks();
@@ -136,15 +154,14 @@ class EditVaksinForm extends Component {
       this.props;
     const { getFieldDecorator } = form;
     const { provinces, regencies, districts, villages } = this.state;
-    const { petugasList, namaPeternakList, selectedNamaPeternakId   } = this.state;
+    const { petugasList, namaPeternakList, selectedNamaPeternakId , hewanList  } = this.state;
     const {
       idVaksin,
       tanggalIB,
       lokasi,
       namaPeternak,
       idPeternak,
-      idHewan,
-      eartag,
+      kodeEartagNasional,
       ib1,
       ib2,
       ib3,
@@ -178,11 +195,6 @@ class EditVaksinForm extends Component {
             {getFieldDecorator("idVaksin", {
               initialValue: idVaksin,
             })(<Input disabled />)}
-          </Form.Item>
-          <Form.Item label="Tanggal IB:">
-            {getFieldDecorator("tanggalIB", {
-              initialValue: tanggalIB,
-            })(<Input type="date" placeholder="Masukkan Tanggal IB" />)}
           </Form.Item>
           <Form.Item label="Provinsi:">
             {getFieldDecorator("provinsi")(
@@ -259,17 +271,21 @@ class EditVaksinForm extends Component {
               rules: [{ required: true, message: "Silahkan isi id peternak" }],
             })(<Input placeholder="Masukkan ID Peternak"  readOnly/>)}
           </Form.Item>
-          <Form.Item label="ID Hewan:">
-            {getFieldDecorator("idHewan", {
-              initialValue: idHewan,
-            })(<Input placeholder="Masukkan ID Hewan" />)}
+          <Form.Item label="Eartag Hewan:">
+            {getFieldDecorator("kodeEartagNasional", {
+              rules: [
+                { required: true, message: "Silahkan isi Eartag Hewan" },
+              ],
+            })(
+              <Select placeholder="Pilih Eartag">
+                {hewanList.map((eartag) => (
+                  <Option key={eartag} value={eartag}>
+                    {eartag}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
-          <Form.Item label="Eartag:">
-            {getFieldDecorator("eartag", {
-              initialValue: eartag,
-            })(<Input placeholder="Masukkan Eartag" />)}
-          </Form.Item>
-
           {/* IB1, IB2, IB3, IB lain */}
           <Form.Item label="IB 1:">
             {getFieldDecorator("ib1", {
@@ -291,7 +307,11 @@ class EditVaksinForm extends Component {
               initialValue: ibLain,
             })(<Input placeholder="Masukkan Vaksin Buatan Lain" />)}
           </Form.Item>
-
+          <Form.Item label="Tanggal IB:">
+            {getFieldDecorator("tanggalIB", {
+              initialValue: tanggalIB,
+            })(<Input type="date" placeholder="Masukkan Tanggal IB" />)}
+          </Form.Item>
           <Form.Item label="ID Pejantan:">
             {getFieldDecorator("idPejantan", {
               initialValue: idPejantan,
@@ -328,7 +348,13 @@ class EditVaksinForm extends Component {
           <Form.Item label="Inseminator:">
             {getFieldDecorator("inseminator", {
               initialValue: inseminator,
-            })(<Input placeholder="Masukkan Inseminator" />)}
+            })(<Select>
+              {petugasList.map((namaPetugas) => (
+                <Option key={namaPetugas} value={namaPetugas}>
+                  {namaPetugas}
+                </Option>
+              ))}
+            </Select>)}
           </Form.Item>
         </Form>
       </Modal>

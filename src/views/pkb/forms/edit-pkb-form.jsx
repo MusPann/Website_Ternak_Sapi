@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Form, Input, Modal, Select } from "antd";
+import { getPetugas } from "@/api/petugas";
 import { getPeternaks } from "@/api/peternak"; 
+import { getHewans } from "../../../api/hewan";
 
 const { Option } = Select;
 
@@ -11,6 +13,8 @@ class EditPKBForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
+    hewanList: [],
+    petugasList: [], 
     namaPeternakList: [],
     selectedNamaPeternakId: null,
   };
@@ -19,7 +23,9 @@ class EditPKBForm extends Component {
     fetch("https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json")
       .then((response) => response.json())
       .then((provinces) => this.setState({ provinces }));
+    this.fetchPetugasList();
     this.fetchNamaPeternakList(); 
+    this.fetchHewanList();
   }
 
   handleProvinceChange = (value) => {
@@ -83,6 +89,36 @@ class EditPKBForm extends Component {
     }
   };
 
+  fetchPetugasList = async () => {
+    try {
+      const result = await getPetugas(); // Fetch petugas data from the server
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          petugasList: content.map((petugas) => petugas.namaPetugas), // Extract petugas names
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching petugas data: ", error);
+    }
+  };
+
+  fetchHewanList = async () => {
+    try {
+      const result = await getHewans();
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          hewanList: content.map((hewan) => hewan.kodeEartagNasional), 
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching hewan data: ", error);
+    }
+  };
+
   fetchNamaPeternakList = async () => {
     try {
       const result = await getPeternaks();
@@ -118,7 +154,7 @@ class EditPKBForm extends Component {
       this.props;
     const { getFieldDecorator } = form;
     const { provinces, regencies, districts, villages } = this.state;
-    const {  namaPeternakList, selectedNamaPeternakId } = this.state;
+    const { petugasList, namaPeternakList, selectedNamaPeternakId, hewanList } = this.state;
     const {
       idKejadian,
       tanggalPkb,
@@ -244,8 +280,18 @@ class EditPKBForm extends Component {
             )}
           </Form.Item>
           <Form.Item label="ID Hewan:">
-            {getFieldDecorator("idHewan", { initialValue: idHewan })(
-              <Input placeholder="Masukkan ID" />
+            {getFieldDecorator("kodeEartagNasional", {
+              rules: [
+                { required: true, message: "Silahkan isi ID Hewan" },
+              ],
+            })(
+              <Select placeholder="Pilih ID Hewan">
+                {hewanList.map((eartag) => (
+                  <Option key={eartag} value={eartag}>
+                    {eartag}
+                  </Option>
+                ))}
+              </Select>
             )}
           </Form.Item>
           <Form.Item label="Spesies:">
@@ -286,7 +332,13 @@ class EditPKBForm extends Component {
           <Form.Item label="Pemeriksa Kebuntingan:">
             {getFieldDecorator("pemeriksaKebuntingan", {
               initialValue: pemeriksaKebuntingan,
-            })(<Input placeholder="Masukkan Pemeriksa Kebuntingan" />)}
+            })(<Select>
+              {petugasList.map((namaPetugas) => (
+                <Option key={namaPetugas} value={namaPetugas}>
+                  {namaPetugas}
+                </Option>
+              ))}
+            </Select>)}
           </Form.Item>
         </Form>
       </Modal>

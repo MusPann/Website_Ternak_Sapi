@@ -67,15 +67,14 @@ class Vaksin extends Component {
 
     if (statusCode === 200) {
       const filteredVaksin = content.filter((vaksin) => {
-        const { idVaksin, idPeternak, idHewan, namaPeternak, eartag,
+        const { idVaksin, idPeternak,  namaPeternak, kodeEartagNasional,
         idPejantan, idPembuatan, bangsaPejantan, produsen, inseminator, lokasi } = vaksin;
         const keyword = this.state.searchKeyword.toLowerCase();
         
         const isIdVaksinValid = typeof idVaksin === 'string';
         const isIdPeternakValid = typeof idPeternak === 'string';
-        const isIdHewanValid = typeof idHewan === 'string';
         const isNamaPeternakValid = typeof namaPeternak === 'string';
-        const isEartagValid = typeof eartag === 'string';
+        const isKodeEartagNasionalValid = typeof kodeEartagNasional === 'string';
         const isIdPejantanValid = typeof idPejantan === 'string';
         const isIdPembuatanValid = typeof idPembuatan === 'string';
         const isBangsaPejantanValid = typeof bangsaPejantan === 'string';
@@ -86,9 +85,8 @@ class Vaksin extends Component {
         return (
           (isIdVaksinValid && idVaksin.toLowerCase().includes(keyword)) ||
           (isIdPeternakValid && idPeternak.toLowerCase().includes(keyword)) ||
-          (isIdHewanValid && idHewan.toLowerCase().includes(keyword)) ||
           (isNamaPeternakValid && namaPeternak.toLowerCase().includes(keyword)) ||
-          (isEartagValid && eartag.toLowerCase().includes(keyword)) ||
+          (isKodeEartagNasionalValid && kodeEartagNasional.toLowerCase().includes(keyword)) ||
           (isIdPejantanValid && idPejantan.toLowerCase().includes(keyword)) ||
           (isIdPembuatanValid && idPembuatan.toLowerCase().includes(keyword)) ||
           (isBangsaPejantanValid && bangsaPejantan.toLowerCase().includes(keyword)) ||
@@ -282,8 +280,7 @@ class Vaksin extends Component {
           tanggalIB: new  Date((row[columnMapping["Tanggal IB"]] - 25569)*86400*1000).toString(),
           lokasi: row[columnMapping["Lokasi"]], 
           idPeternak: row[columnMapping["ID Peternak"]],
-          idHewan: row[columnMapping["ID Hewan"]],
-          eartag: row[columnMapping["Eartag"]],
+          kodeEartagNasional: row[columnMapping["Eartag"]],
           ib1: row[columnMapping["IB 1"]],
           ib2: row[columnMapping["IB 2"]],
           ib3: row[columnMapping["IB 3"]],
@@ -379,8 +376,7 @@ class Vaksin extends Component {
         item.lokasi,
         item.namaPeternak,
         item.idPeternak,
-        item.idHewan,
-        item.eartag,
+        item.kodeEartagNasional,
         item.ib1,
         item.ib2,
         item.ib3,
@@ -434,8 +430,7 @@ class Vaksin extends Component {
       {title:"Lokasi", dataIndex:"lokasi", key:"lokasi"},
       {title:"Nama Peternak", dataIndex:["idPeternak", "namaPeternak"], key:"namaPeternak"},
       {title:"ID Peternak", dataIndex:["idPeternak", "idPeternak"], key:"idPeternak"},
-      {title:"ID Hewan", dataIndex:"idHewan", key:"idHewan"},
-      {title:"Eartag", dataIndex:"eartag", key:"eartag"},
+      {title:"Kode Eartag", dataIndex:["kodeEartagNasional", "kodeEartagNasional"], key:"kodeEartagNasional"},
       {title:"IB 1", dataIndex:"ib1", key:"ib1"},
       {title:"IB 2", dataIndex:"ib2", key:"ib2"},
       {title:"IB 3", dataIndex:"ib3", key:"ib3"},

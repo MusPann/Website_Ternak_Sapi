@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Form, Input, Modal, Select } from "antd";
 import { getPetugas } from "@/api/petugas"; // Import the API function to fetch petugas data
 import { getPeternaks } from "@/api/peternak"; 
-
+import { getHewans } from "../../../api/hewan";
 const { Option } = Select;
 
 class AddInseminasiBuatanForm extends Component {
@@ -12,6 +12,7 @@ class AddInseminasiBuatanForm extends Component {
     regencies: [],
     districts: [],
     villages: [],
+    hewanList: [],
     petugasList: [],
     namaPeternakList: [],
     selectedNamaPeternakId: null,
@@ -23,6 +24,7 @@ class AddInseminasiBuatanForm extends Component {
       .then((provinces) => this.setState({ provinces }));
     this.fetchPetugasList();
     this.fetchNamaPeternakList();
+    this.fetchHewanList();
   }
 
   handleProvinceChange = (value) => {
@@ -101,6 +103,21 @@ class AddInseminasiBuatanForm extends Component {
     }
   };
 
+  fetchHewanList = async () => {
+    try {
+      const result = await getHewans();
+      const { content, statusCode } = result.data;
+      if (statusCode === 200) {
+        this.setState({
+          hewanList: content.map((hewan) => hewan.kodeEartagNasional), 
+        });
+      }
+    } catch (error) {
+      // Handle error if any
+      console.error("Error fetching hewan data: ", error);
+    }
+  };
+
   fetchNamaPeternakList = async () => {
     try {
       const result = await getPeternaks();
@@ -140,7 +157,7 @@ class AddInseminasiBuatanForm extends Component {
     const { getFieldDecorator } = form;
     const { provinces, regencies, districts, villages } = this.state;
     const { petugasList, namaPeternakList, 
-      selectedNamaPeternakId   } = this.state;
+      selectedNamaPeternakId, hewanList   } = this.state;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -169,16 +186,6 @@ class AddInseminasiBuatanForm extends Component {
                 },
               ],
             })(<Input placeholder="Masukkan ID Inseminasi" />)}
-          </Form.Item>
-          <Form.Item label="Tanggal IB:">
-            {getFieldDecorator("tanggalIB", {
-              rules: [
-                {
-                  required: true,
-                  message: "Silahkan isi tanggal inseminasi buatan",
-                },
-              ],
-            })(<Input type="date" placeholder="Masukkan Tanggal IB" />)}
           </Form.Item>
           <Form.Item label="Provinsi:">
             {getFieldDecorator("provinsi")(
@@ -249,15 +256,20 @@ class AddInseminasiBuatanForm extends Component {
               rules: [{ required: true, message: "Silahkan isi Nama Peternak" }],
             })(<Input disabled />)}
           </Form.Item>
-          <Form.Item label="ID Hewan:">
-            {getFieldDecorator("idHewan", {
-              rules: [{ required: true, message: "Silahkan isi id hewan" }],
-            })(<Input placeholder="Masukkan ID Hewan" />)}
-          </Form.Item>
-          <Form.Item label="Eartag:">
-            {getFieldDecorator("eartag", {
-              rules: [{ required: true, message: "Silahkan isi eartag" }],
-            })(<Input placeholder="Masukkan Eartag" />)}
+          <Form.Item label="Eartag Hewan:">
+            {getFieldDecorator("kodeEartagNasional", {
+              rules: [
+                { required: true, message: "Silahkan isi Eartag Hewan" },
+              ],
+            })(
+              <Select placeholder="Pilih Eartag">
+                {hewanList.map((eartag) => (
+                  <Option key={eartag} value={eartag}>
+                    {eartag}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </Form.Item>
 
           {/* IB1, IB2, IB3, IB lain */}
@@ -285,7 +297,16 @@ class AddInseminasiBuatanForm extends Component {
               {}
             )(<Input placeholder="Masukkan Inseminasi Buatan Lain" />)}
           </Form.Item>
-
+          <Form.Item label="Tanggal IB:">
+            {getFieldDecorator("tanggalIB", {
+              rules: [
+                {
+                  required: true,
+                  message: "Silahkan isi tanggal inseminasi buatan",
+                },
+              ],
+            })(<Input type="date" placeholder="Masukkan Tanggal IB" />)}
+          </Form.Item>
           <Form.Item label="ID Pejantan:">
             {getFieldDecorator("idPejantan", {
               rules: [{ required: true, message: "Silahkan isi id pejantan" }],
