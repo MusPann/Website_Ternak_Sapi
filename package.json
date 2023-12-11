@@ -1,0 +1,89 @@
+{
+  "name": "react_antd_admin_template",
+  "version": "1.0.0",
+  "author": "NLRX <414961362@qq.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@ant-design/icons": "^5.1.4",
+    "@react-leaflet/core": ">=1.0.0 <1.1.0 || ^1.1.1",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "@toast-ui/react-editor": "^2.1.0",
+    "ant-design": "^1.0.0",
+    "antd": "^3.17.0",
+    "axios": "^1.5.1",
+    "clipboard": "^2.0.6",
+    "convert-array-to-csv": "^2.0.0",
+    "csv": "^6.3.1",
+    "csv-stringify": "^6.4.0",
+    "draft-js": "^0.11.5",
+    "draftjs-to-html": "^0.9.1",
+    "draftjs-to-markdown": "^0.6.0",
+    "driver.js": "^0.9.8",
+    "echarts": "^4.7.0",
+    "file-saver": "^2.0.5",
+    "html-react-parser": "^3.0.16",
+    "js-cookie": "^2.2.1",
+    "json2csv": "^6.0.0-alpha.2",
+    "jszip": "^3.4.0",
+    "leaflet": "1.6.0",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+    "moment": "^2.29.4",
+    "nprogress": "^0.2.0",
+    "papaparse": "^5.4.1",
+    "prop-types": "^15.7.2",
+    "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.0.0",
+    "react-countup": "^4.3.3",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-document-title": "^2.0.3",
+    "react-dom": "^18.2.0",
+    "react-draft-wysiwyg": "^1.14.5",
+    "react-geocode": "^1.0.0-alpha.1",
+    "react-leaflet": "3.2.0",
+    "react-loadable": "^5.5.0",
+    "react-player-custom": "^1.11.14",
+    "react-quill": "^2.0.0",
+    "react-redux": "^7.2.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.1",
+    "react-transition-group": "^4.4.1",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
+    "screenfull": "^5.0.2",
+    "script-loader": "^0.7.2",
+    "xlsx": "^0.16.0"
+  },
+  "scripts": {
+    "start": "react-app-rewired --openssl-legacy-provider start",
+    "build": "react-app-rewired --openssl-legacy-provider build ",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject",
+    "commit": "git cz"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "babel-plugin-import": "^1.13.0",
+    "commitizen": "^4.0.3",
+    "customize-cra": "^0.9.1",
+    "cz-conventional-changelog": "^3.0.2",
+    "mockjs": "^1.1.0",
+    "react-app-rewired": "^2.1.5",
+    "user-agent": "^1.0.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
